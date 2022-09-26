@@ -1,3 +1,4 @@
+from curses.panel import update_panels
 import os
 import rospy
 import rospkg
@@ -10,6 +11,7 @@ from python_qt_binding.QtWidgets import QWidget
 from python_qt_binding import QtWidgets
 from geometry_msgs.msg import PoseStamped 
 from iiwa_msgs.msg import CartesianPose
+from std_msgs.msg import Bool
 
 
 class MyPlugin(Plugin):
@@ -38,7 +40,7 @@ class MyPlugin(Plugin):
         # Extend the widget with all attributes and children from UI file
         loadUi(ui_file, self._widget)
         # Give QObjects reasonable names
-        self._widget.setObjectName('MyPluginUi')
+        self._widget.setObjectName('ForceAdjustment')
         # Show _widget.windowTitle on left-top of each plugin (when 
         # it's set in _widget). This is useful when you open multiple 
         # plugins at once. Also if you open multiple instances of your 
@@ -49,8 +51,6 @@ class MyPlugin(Plugin):
         # Add widget to the user interface
         context.add_widget(self._widget)
 
-        self._widget.resetButton.clicked[bool].connect(self._handle_reset_button_clicked)
-        self._widget.startButton.clicked[bool].connect(self._handle_start_button_clicked)
         self._widget.anatomySelection.currentIndexChanged.connect(self._handle_anatomy_selection_index_changed)
 
         self._widget.setStartPoseButton.clicked.connect(self._handle_set_start_pose_button_clicked)
@@ -59,84 +59,78 @@ class MyPlugin(Plugin):
         self._widget.setGoalPoseToolButton.clicked.connect(self._handle_set_goal_pose_tool_button_clicked)
         self._widget.resetSensorButton.clicked.connect(self._handle_reset_sensor_button_clicked)
 
-    def _handle_reset_button_clicked(self):
-        print("clicked reset button")
-        self._widget.anatomySelection.setCurrentIndex(0)
-        self._widget.desiredForceSpinBox.setValue(0)
-        #TODO: Reset start and goal poses
+        self._widget.resetButton.clicked[bool].connect(self._handle_reset_button_clicked)
+        self._widget.startButton.clicked[bool].connect(self._handle_start_button_clicked)
+
+        self.robot = fz.RobotInstance()
 
 
     def _handle_anatomy_selection_index_changed(self, index):
         print("anatomy selection changed to index: ", index)
-        #TODO: Change strings to variables. Set label test at the end of if statement. Inside the if statements just add the numbers to the final string
-        if(index == 0):
-            self._widget.maxForceLabel.setText("max. force:")
-            self._widget.minForceLabel.setText("min. force:")
-            return
-        elif(index == 1):
-            self._widget.maxForceLabel.setText("max. force: t")
-            self._widget.minForceLabel.setText("min. force: t")
-            return
-        elif(index == 2):
-            self._widget.maxForceLabel.setText("max. force: a")
-            self._widget.minForceLabel.setText("min. force: a")
-            return
-        elif(index == 3):
-            self._widget.maxForceLabel.setText("max. force: arm")
-            self._widget.minForceLabel.setText("min. force: arm")
-            return
-        elif(index == 4):
-            self._widget.maxForceLabel.setText("max. force: l")
-            self._widget.minForceLabel.setText("min. force: l")
-            return
-        elif(index == 5):
-            self._widget.maxForceLabel.setText("max. force: s")
-            self._widget.minForceLabel.setText("min. force: s")
-            return
-        else:
-            self._widget.maxForceLabel.setText("max. force: ?")
-            self._widget.minForceLabel.setText("min. force: ?")
-            return
+        min_str = "min. force: "
+        max_str = "max. force: "
+        if(index >= 1):
+            min_str += str(anatomy_limits.ANATOMY_LIMITS[index][0])
+            self.robot.lower_threshold = anatomy_limits.ANATOMY_LIMITS[index][0]
+            max_str += str(anatomy_limits.ANATOMY_LIMITS[index][1])
+            self.robot.upper_threshold = anatomy_limits.ANATOMY_LIMITS[index][1]
+        self._widget.maxForceLabel.setText(max_str)
+        self._widget.minForceLabel.setText(min_str)
+            
     
-    def _handle_set_start_pose_button_clicked():
-        # TODO: Set start pose to current pose of robot
-        pass
+    def _handle_set_start_pose_button_clicked(self):
+        self.robot.start_pose = self.robot.current_pose
 
-    def _handle_set_start_pose_tool_button_clicked():
-        #TODO: Open modal and show the start pose, no pose is set inform the user about this
-        pass
 
-    def _handle_set_goal_pose_button_clicked():
-        #TODO: set goal pose to currect pose of robot
-        pass
+    def _handle_set_start_pose_tool_button_clicked(self):
+        if not self.robot.start_pose == None:
+            QtWidgets.QMessageBox.information(self._widget, "Current start pose", str(self.robot.start_pose.poseStamped.pose))
+        else:
+            QtWidgets.QMessageBox.critical(self._widget, "Starting pose not set", "Please set a valid starting pose")
 
-    def _handle_set_goal_pose_tool_button_clicked():
-        #TODO: open modal and show goal pose
-        pass
 
-    def _handle_reset_sensor_button_clicked():
-        #TODO: Close sensor node and restart it
-        pass
+    def _handle_set_goal_pose_button_clicked(self):
+        self.robot.goal_pose = self.robot.current_pose.poseStamped
+
+
+    def _handle_set_goal_pose_tool_button_clicked(self):
+        if not self.robot.goal_pose == None:
+            QtWidgets.QMessageBox.information(self._widget, "Current goal pose", str(self.robot.goal_pose.pose))
+        else:
+            QtWidgets.QMessageBox.critical(self._widget, "Goal pose not set", "Please set a valid goal pose")
+
+
+    def _handle_reset_sensor_button_clicked(self):
+        print("Clicked reset sensor button")
+        force_sensor_reset_pub = rospy.Publisher("force_sensor_reset", Bool, queue_size=2)
+        force_sensor_reset_pub.publish(True)
+
 
     def _handle_start_button_clicked(self):
-        print( self._widget.coordinateButtons.checkedId())
         print("clicked start button")   
         # Show error modal if all fields do not have valid values
         if self._widget.anatomySelection.currentIndex() == 0 or\
            self._widget.desiredForceSpinBox.value() <= 0 or\
-           self._widget.goalDistance.value() == 0 or\
-           self._widget.coordinateButtons.checkedId() == -1:
+           self.robot.start_pose == None or\
+           self.robot.goal_pose == None:
             QtWidgets.QMessageBox.critical(self._widget, "Error", "Please set a valid value for all fields ")
+        elif self._widget.desiredForceSpinBox.value() < anatomy_limits.ANATOMY_LIMITS[self._widget.anatomySelection.currentIndex()][0] or\
+            self._widget.desiredForceSpinBox.value() > anatomy_limits.ANATOMY_LIMITS[self._widget.anatomySelection.currentIndex()][1]:
+                QtWidgets.QMessageBox.critical(self._widget, "Error", "Desired force has to be between min and max forces")
         else: 
-            robot = fz.RobotInstance()
-            robot.current_pose = rospy.wait_for_message("/iiwa/state/CartesianPose", CartesianPose, timeout=5)
-            robot.goal_pose = fz.create_goal_pose_message(robot, self._widget.coordinateButtons.checkedId(), self._widget.goalDistance.value())
-            robot.lower_threshold = anatomy_limits.ANATOMY_LIMITS[self._widget.anatomySelection.currentIndex()][0]
-            robot.upper_threshold = anatomy_limits.ANATOMY_LIMITS[self._widget.anatomySelection.currentIndex()][1]
-            robot.desired_force = self._widget.desiredForceSpinBox.value()
-            # TODO:force z control loop, x yonu icin ayarlanmis. en basta baslangic pozisyonunu kaydedip, her degisimden sonra start pozisyonuna kiyasla goal poz ayarlayip yeni koordinat gondermen lazim.
-            print(robot.goal_pose)
-            fz.start_control_loop(robot)
+            self.robot.desired_force = self._widget.desiredForceSpinBox.value()
+            self.robot.lower_deviation, self.robot.upper_deviation = calculate_force_limits(self._widget.deviationSpinBox.value(), self.robot.desired_force,\
+                 self.robot.lower_threshold, self.robot.upper_threshold)
+            #TODO: Send robot to starting position and wait until its reached
+            fz.start_control_loop(self.robot)
+
+
+    def _handle_reset_button_clicked(self):
+        print("clicked reset button")
+        self._widget.anatomySelection.setCurrentIndex(0)
+        self._widget.desiredForceSpinBox.setValue(0)
+        self._widget.deviationSpinBox.setValue(0)
+        self.robot = fz.RobotInstance()
 
 
     def shutdown_plugin(self):
@@ -157,3 +151,8 @@ class MyPlugin(Plugin):
         # Comment in to signal that the plugin has a way to configure
         # This will enable a setting button (gear icon) in each dock widget title bar
         # Usually used to open a modal configuration dialog
+
+def calculate_force_limits(deviation, desired_force, min_force, max_force):
+    min_value = abs(desired_force - min_force) * deviation/100
+    max_value = abs(desired_force - max_force) * deviation/100
+    return [desired_force-min_value, desired_force+max_value]
