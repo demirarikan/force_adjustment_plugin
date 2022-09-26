@@ -1,4 +1,3 @@
-from curses.panel import update_panels
 import os
 import rospy
 import rospkg
@@ -84,13 +83,13 @@ class MyPlugin(Plugin):
 
     def _handle_set_start_pose_tool_button_clicked(self):
         if not self.robot.start_pose == None:
-            QtWidgets.QMessageBox.information(self._widget, "Current start pose", str(self.robot.start_pose.poseStamped.pose))
+            QtWidgets.QMessageBox.information(self._widget, "Current start pose", str(self.robot.start_pose.pose))
         else:
             QtWidgets.QMessageBox.critical(self._widget, "Starting pose not set", "Please set a valid starting pose")
 
 
     def _handle_set_goal_pose_button_clicked(self):
-        self.robot.goal_pose = self.robot.current_pose.poseStamped
+        self.robot.goal_pose = self.robot.current_pose
 
 
     def _handle_set_goal_pose_tool_button_clicked(self):
