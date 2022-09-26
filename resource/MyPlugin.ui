@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Forceadjustment</class>
+ <widget class="QWidget" name="Forceadjustment">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>402</width>
+    <height>265</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Force adjustment</string>
+  </property>
+  <widget class="QSpinBox" name="desiredForceSpinBox">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>70</y>
+     <width>41</width>
+     <height>30</height>
+    </rect>
+   </property>
+   <property name="maximum">
+    <number>50</number>
+   </property>
+  </widget>
+  <widget class="QLabel" name="desiredForceLabel">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>70</y>
+     <width>131</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Desired force (N)</string>
+   </property>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>371</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QComboBox" name="anatomySelection">
+      <property name="editable">
+       <bool>false</bool>
+      </property>
+      <item>
+       <property name="text">
+        <string>Select anatomy</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Thyroid</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Abominal aorta</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Arterial arm</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Leg</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Spine</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="maxForceLabel">
+      <property name="text">
+       <string>max. force:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QLabel" name="minForceLabel">
+      <property name="text">
+       <string>min. force:</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QPushButton" name="startButton">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>180</y>
+     <width>90</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Start</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="resetButton">
+   <property name="geometry">
+    <rect>
+     <x>190</x>
+     <y>180</y>
+     <width>89</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Reset</string>
+   </property>
+   <attribute name="buttonGroup">
+    <string notr="true">coordinateButtons</string>
+   </attribute>
+  </widget>
+  <widget class="QPushButton" name="setStartPoseButton">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>70</y>
+     <width>131</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Set starting pose</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="setGoalPoseButton">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>110</y>
+     <width>131</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Set goal pose</string>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="setGoalPoseToolButton">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>110</y>
+     <width>26</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QToolButton" name="setStartPoseToolButton">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>70</y>
+     <width>26</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>...</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="resetSensorButton">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>150</y>
+     <width>131</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Reset sensor</string>
+   </property>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="coordinateButtons"/>
+ </buttongroups>
+</ui>
