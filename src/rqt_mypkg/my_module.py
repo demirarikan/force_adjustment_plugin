@@ -66,6 +66,8 @@ class MyPlugin(Plugin):
         self._widget.setGoalPoseButton.clicked.connect(self._handle_set_goal_pose_button_clicked)
         self._widget.setGoalPoseToolButton.clicked.connect(self._handle_set_goal_pose_tool_button_clicked)
         self._widget.resetSensorButton.clicked.connect(self._handle_reset_sensor_button_clicked)
+        self._widget.desiredForceSpinBox.valueChanged.connect(self._handle_desired_force_spinbox_value_changed)
+        self._widget.deviationSpinBox.valueChanged.connect(self._handle_deviation_spin_box_value_changed)
 
         self._widget.resetButton.clicked[bool].connect(self._handle_reset_button_clicked)
         self._widget.startButton.clicked[bool].connect(self._handle_start_button_clicked)
@@ -132,6 +134,16 @@ class MyPlugin(Plugin):
         force_sensor_reset_pub.publish(True)
 
 
+    def _handle_desired_force_spinbox_value_changed(self, value):
+        self.robot.desired_force = value
+
+
+    def _handle_deviation_spin_box_value_changed(self, value):
+        (min, max) = calculate_force_limits(self._widget.deviationSpinBox.value(), self.robot.desired_force,\
+                 self.robot.lower_threshold, self.robot.upper_threshold)
+        self._widget.deviationForces.setText(str(min) + "-" + str(max)+"N")
+
+
     def _handle_start_button_clicked(self):
         print("clicked start button")   
         # Show error modal if all fields do not have valid values
@@ -140,13 +152,12 @@ class MyPlugin(Plugin):
            self.robot.start_pose == None or self.robot.goal_pose == None or\
            self.robot.lower_threshold > self.robot.upper_threshold or\
            self.robot.lower_threshold == 0 or self.robot.upper_threshold == 0:
-            QtWidgets.QMessageBox.critical(self._widget, "Error", "Please set a valid value for all fields ")
+            QtWidgets.QMessageBox.critical(self._widget, "Error", "Please set valid values for all fields ")
 
         elif self._widget.desiredForceSpinBox.value() < anatomy_limits.ANATOMY_LIMITS[self._widget.anatomySelection.currentIndex()][0] or\
             self._widget.desiredForceSpinBox.value() > anatomy_limits.ANATOMY_LIMITS[self._widget.anatomySelection.currentIndex()][1]:
                 QtWidgets.QMessageBox.critical(self._widget, "Error", "Desired force has to be between min and max forces")
         else: 
-            self.robot.desired_force = self._widget.desiredForceSpinBox.value()
             self.robot.lower_deviation, self.robot.upper_deviation = calculate_force_limits(self._widget.deviationSpinBox.value(), self.robot.desired_force,\
                  self.robot.lower_threshold, self.robot.upper_threshold)
             self.robot.new_pose_publisher.publish(self.robot.start_pose)
