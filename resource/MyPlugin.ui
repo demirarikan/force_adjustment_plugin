@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>784</width>
-    <height>568</height>
+    <width>888</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,101 +17,23 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>10</y>
+     <y>240</y>
      <width>371</width>
      <height>41</height>
     </rect>
    </property>
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="QComboBox" name="anatomySelection">
-      <property name="editable">
-       <bool>false</bool>
-      </property>
-      <item>
-       <property name="text">
-        <string>Select anatomy</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Thyroid</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Abominal aorta</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Arterial arm</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Leg</string>
-       </property>
-      </item>
-      <item>
-       <property name="text">
-        <string>Spine</string>
-       </property>
-      </item>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="minForceLabel">
-      <property name="text">
-       <string>min. force:</string>
-      </property>
-     </widget>
-    </item>
-    <item>
-     <widget class="QLabel" name="maxForceLabel">
-      <property name="text">
-       <string>max. force:</string>
-      </property>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QPushButton" name="startButton">
-   <property name="geometry">
-    <rect>
-     <x>290</x>
-     <y>190</y>
-     <width>90</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Start</string>
-   </property>
-  </widget>
-  <widget class="QPushButton" name="resetButton">
-   <property name="geometry">
-    <rect>
-     <x>190</x>
-     <y>190</y>
-     <width>89</width>
-     <height>25</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Reset</string>
-   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout"/>
   </widget>
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>60</y>
-     <width>371</width>
+     <width>391</width>
      <height>135</height>
     </rect>
    </property>
-   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0" columnminimumwidth="0,0,0,0">
+   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0" columnminimumwidth="0,0,0,0">
     <item row="0" column="0">
      <widget class="QPushButton" name="setStartPoseButton">
       <property name="text">
@@ -182,6 +104,171 @@
      </widget>
     </item>
    </layout>
+  </widget>
+  <widget class="QWidget" name="horizontalLayoutWidget_2">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>200</y>
+     <width>391</width>
+     <height>31</height>
+    </rect>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="QPushButton" name="helpButton">
+      <property name="text">
+       <string> Help</string>
+      </property>
+      <property name="icon">
+       <iconset theme="help">
+        <normaloff>.</normaloff>.</iconset>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="advancedButton">
+      <property name="text">
+       <string> Advanced</string>
+      </property>
+      <property name="icon">
+       <iconset theme="emblem-system">
+        <normaloff>.</normaloff>.</iconset>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="resetButton">
+      <property name="text">
+       <string> Reset</string>
+      </property>
+      <property name="icon">
+       <iconset theme="view-refresh">
+        <normaloff>.</normaloff>.</iconset>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="startButton">
+      <property name="text">
+       <string> Start</string>
+      </property>
+      <property name="icon">
+       <iconset theme="media-playback-start">
+        <normaloff>.</normaloff>.</iconset>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QComboBox" name="anatomySelection">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>20</y>
+     <width>135</width>
+     <height>25</height>
+    </rect>
+   </property>
+   <property name="editable">
+    <bool>false</bool>
+   </property>
+   <property name="frame">
+    <bool>true</bool>
+   </property>
+   <item>
+    <property name="text">
+     <string>Select anatomy</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Thyroid</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Abominal aorta</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Arterial arm</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Leg</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Spine</string>
+    </property>
+   </item>
+   <item>
+    <property name="text">
+     <string>Custom</string>
+    </property>
+   </item>
+  </widget>
+  <widget class="QLabel" name="minForceLabel">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>20</y>
+     <width>121</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>min. force:</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="minForceSpinBox">
+   <property name="geometry">
+    <rect>
+     <x>230</x>
+     <y>20</y>
+     <width>41</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="buttonSymbols">
+    <enum>QAbstractSpinBox::UpDownArrows</enum>
+   </property>
+   <property name="showGroupSeparator" stdset="0">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="maxForceLabel">
+   <property name="geometry">
+    <rect>
+     <x>280</x>
+     <y>20</y>
+     <width>121</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>max. force:</string>
+   </property>
+  </widget>
+  <widget class="QSpinBox" name="maxForceSpinBox">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>20</y>
+     <width>41</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <property name="showGroupSeparator" stdset="0">
+    <bool>false</bool>
+   </property>
   </widget>
  </widget>
  <resources/>

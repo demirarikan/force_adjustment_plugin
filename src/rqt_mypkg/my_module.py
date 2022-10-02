@@ -1,4 +1,6 @@
 import os
+from sqlite3 import adapt
+from time import sleep
 import rospy
 import rospkg
 from force_adjustment import force_z_control_loop as fz
@@ -6,12 +8,12 @@ import anatomy_limits
 
 from qt_gui.plugin import Plugin
 from python_qt_binding import loadUi
-from python_qt_binding.QtWidgets import QWidget
+from python_qt_binding.QtWidgets import QWidget, QDialog
 from python_qt_binding import QtWidgets
 from geometry_msgs.msg import PoseStamped 
 from iiwa_msgs.msg import CartesianPose
 from std_msgs.msg import Bool
-
+        
 
 class MyPlugin(Plugin):
 
@@ -50,7 +52,14 @@ class MyPlugin(Plugin):
         # Add widget to the user interface
         context.add_widget(self._widget)
 
+        # Handle interactions with the widgets
         self._widget.anatomySelection.currentIndexChanged.connect(self._handle_anatomy_selection_index_changed)
+        # Hide the min max force selectors until user selects the "custom" option in anatomy selection
+        self._widget.minForceSpinBox.setHidden(True)
+        self._widget.maxForceSpinBox.setHidden(True)
+        self._widget.minForceSpinBox.valueChanged.connect(self._handle_min_force_spin_box_value_changed)
+        self._widget.maxForceSpinBox.valueChanged.connect(self._handle_max_force_spin_box_value_changed)
+        
 
         self._widget.setStartPoseButton.clicked.connect(self._handle_set_start_pose_button_clicked)
         self._widget.setStartPoseToolButton.clicked.connect(self._handle_set_start_pose_tool_button_clicked)
@@ -68,20 +77,36 @@ class MyPlugin(Plugin):
         print("anatomy selection changed to index: ", index)
         min_str = "min. force: "
         max_str = "max. force: "
-        if(index >= 1):
+        if(str(self._widget.anatomySelection.itemText(index)) == "Custom"):
+            print("Set custom force values")
+            self._widget.minForceSpinBox.setVisible(True)
+            self._widget.maxForceSpinBox.setVisible(True)
+        elif(index >= 1):
+            self._widget.minForceSpinBox.setHidden(True)
+            self._widget.maxForceSpinBox.setHidden(True)
             min_str += str(anatomy_limits.ANATOMY_LIMITS[index][0])
             self.robot.lower_threshold = anatomy_limits.ANATOMY_LIMITS[index][0]
             max_str += str(anatomy_limits.ANATOMY_LIMITS[index][1])
             self.robot.upper_threshold = anatomy_limits.ANATOMY_LIMITS[index][1]
         self._widget.maxForceLabel.setText(max_str)
         self._widget.minForceLabel.setText(min_str)
-            
-    
+
+
+    def _handle_min_force_spin_box_value_changed(self, value): 
+        self.robot.lower_threshold = value
+
+
+    def _handle_max_force_spin_box_value_changed(self, value): 
+        self.robot.upper_threshold = value
+
+
     def _handle_set_start_pose_button_clicked(self):
+        print("Starting pose set.")
         self.robot.start_pose = self.robot.current_pose
 
 
     def _handle_set_start_pose_tool_button_clicked(self):
+        print("Showing starting pose.")
         if not self.robot.start_pose == None:
             QtWidgets.QMessageBox.information(self._widget, "Current start pose", str(self.robot.start_pose.pose))
         else:
@@ -89,10 +114,12 @@ class MyPlugin(Plugin):
 
 
     def _handle_set_goal_pose_button_clicked(self):
+        print("Goal pose set.")
         self.robot.goal_pose = self.robot.current_pose
 
 
     def _handle_set_goal_pose_tool_button_clicked(self):
+        print("Showing goal pose.")
         if not self.robot.goal_pose == None:
             QtWidgets.QMessageBox.information(self._widget, "Current goal pose", str(self.robot.goal_pose.pose))
         else:
@@ -100,7 +127,7 @@ class MyPlugin(Plugin):
 
 
     def _handle_reset_sensor_button_clicked(self):
-        print("Clicked reset sensor button")
+        print("Resetting sensor")
         force_sensor_reset_pub = rospy.Publisher("force_sensor_reset", Bool, queue_size=2)
         force_sensor_reset_pub.publish(True)
 
@@ -110,9 +137,11 @@ class MyPlugin(Plugin):
         # Show error modal if all fields do not have valid values
         if self._widget.anatomySelection.currentIndex() == 0 or\
            self._widget.desiredForceSpinBox.value() <= 0 or\
-           self.robot.start_pose == None or\
-           self.robot.goal_pose == None:
+           self.robot.start_pose == None or self.robot.goal_pose == None or\
+           self.robot.lower_threshold > self.robot.upper_threshold or\
+           self.robot.lower_threshold == 0 or self.robot.upper_threshold == 0:
             QtWidgets.QMessageBox.critical(self._widget, "Error", "Please set a valid value for all fields ")
+
         elif self._widget.desiredForceSpinBox.value() < anatomy_limits.ANATOMY_LIMITS[self._widget.anatomySelection.currentIndex()][0] or\
             self._widget.desiredForceSpinBox.value() > anatomy_limits.ANATOMY_LIMITS[self._widget.anatomySelection.currentIndex()][1]:
                 QtWidgets.QMessageBox.critical(self._widget, "Error", "Desired force has to be between min and max forces")
@@ -120,12 +149,22 @@ class MyPlugin(Plugin):
             self.robot.desired_force = self._widget.desiredForceSpinBox.value()
             self.robot.lower_deviation, self.robot.upper_deviation = calculate_force_limits(self._widget.deviationSpinBox.value(), self.robot.desired_force,\
                  self.robot.lower_threshold, self.robot.upper_threshold)
-            #TODO: Send robot to starting position and wait until its reached
-            fz.start_control_loop(self.robot)
+            self.robot.new_pose_publisher.publish(self.robot.start_pose)
+            while not self.robot.pose_reached(self.robot.start_pose):
+                print("Going to starting pose")
+                sleep(0.5)
+            print("Reached starting pose")
+
+            self.robot.start_control_loop()
+            print("Reached goal pose")
 
 
     def _handle_reset_button_clicked(self):
-        print("clicked reset button")
+        print("Reset")
+        self._widget.minForceSpinBox.setValue(0)
+        self._widget.maxForceSpinBox.setValue(0)
+        self._widget.minForceSpinBox.setHidden(True)
+        self._widget.maxForceSpinBox.setHidden(True)
         self._widget.anatomySelection.setCurrentIndex(0)
         self._widget.desiredForceSpinBox.setValue(0)
         self._widget.deviationSpinBox.setValue(0)
