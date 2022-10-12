@@ -2,7 +2,7 @@
 # Make sure the order of the list is consistent with the list in the combobox!
 # Index: Name
 # 1: Thyroid
-# 2: Abdonminal aorta
+# 2: Abdominal aorta
 # 3: Arterial arm
 # 4: Leg
 # 5: Spine

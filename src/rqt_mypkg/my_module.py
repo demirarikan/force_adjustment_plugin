@@ -59,7 +59,6 @@ class MyPlugin(Plugin):
         self._widget.maxForceSpinBox.setHidden(True)
         self._widget.minForceSpinBox.valueChanged.connect(self._handle_min_force_spin_box_value_changed)
         self._widget.maxForceSpinBox.valueChanged.connect(self._handle_max_force_spin_box_value_changed)
-        
 
         self._widget.setStartPoseButton.clicked.connect(self._handle_set_start_pose_button_clicked)
         self._widget.setStartPoseToolButton.clicked.connect(self._handle_set_start_pose_tool_button_clicked)
@@ -69,8 +68,9 @@ class MyPlugin(Plugin):
         self._widget.desiredForceSpinBox.valueChanged.connect(self._handle_desired_force_spinbox_value_changed)
         self._widget.deviationSpinBox.valueChanged.connect(self._handle_deviation_spin_box_value_changed)
 
-        self._widget.resetButton.clicked[bool].connect(self._handle_reset_button_clicked)
-        self._widget.startButton.clicked[bool].connect(self._handle_start_button_clicked)
+        self._widget.helpButton.clicked.connect(self._handle_help_button_clicked)
+        self._widget.resetButton.clicked.connect(self._handle_reset_button_clicked)
+        self._widget.startButton.clicked.connect(self._handle_start_button_clicked)
 
         self.robot = fz.RobotInstance()
 
@@ -160,12 +160,17 @@ class MyPlugin(Plugin):
         else: 
             self.robot.lower_deviation, self.robot.upper_deviation = calculate_force_limits(self._widget.deviationSpinBox.value(), self.robot.desired_force,\
                  self.robot.lower_threshold, self.robot.upper_threshold)
+
+            print("Current settings:\n", str(self.robot.upper_threshold) + "\n",
+                str(self.robot.lower_threshold) + "\n",
+                str(self.robot.upper_deviation) + "\n",
+                str(self.robot.lower_deviation) + "\n",
+                str(self.robot.desired_force) + "\n")
             self.robot.new_pose_publisher.publish(self.robot.start_pose)
             while not self.robot.pose_reached(self.robot.start_pose):
                 print("Going to starting pose")
                 sleep(0.5)
             print("Reached starting pose")
-
             self.robot.start_control_loop()
             print("Reached goal pose")
 
@@ -181,6 +186,15 @@ class MyPlugin(Plugin):
         self._widget.deviationSpinBox.setValue(0)
         self.robot = fz.RobotInstance()
 
+    def _handle_help_button_clicked(self):
+        QtWidgets.QMessageBox.information(self._widget, "Help", 
+        "         Anatomy selection: Select the anatomy you want to scan from the menu. The min. and max. forces will be adjusted accordingly. Select the custom option if you want define your own min. max. forces.\n\n \
+        Setting the start and goal poses: Move the robot in the desired location and press the respective buttons to set the poses. Poses can be viewed with the info button.\n\n\
+        Resetting the sensor: To be used after attaching or removing from the sensor. Resets the values to 0 similar to the tare function on a scale\n\n\
+        Desired force: The force that will be applied during the scan. Has to be between min. and max. forces\n\n\
+        Deviation from desired force: Sets the force limits for the scan. 100 allows for all values between the desired force and min./max. forces.\n\n\
+        Reset: Resets all fields.\n\n\
+        Start: Moves the robot to the starting position and starts the scan.")
 
     def shutdown_plugin(self):
         # TODO unregister all publishers here
