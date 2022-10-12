@@ -13,11 +13,15 @@
   <property name="minimumSize">
    <size>
     <width>410</width>
-    <height>245</height>
+    <height>275</height>
    </size>
   </property>
   <property name="windowTitle">
    <string>Force adjustment</string>
+  </property>
+  <property name="windowIcon">
+   <iconset theme="applications-utilities">
+    <normaloff>../../../../.designer/backup</normaloff>../../../../.designer/backup</iconset>
   </property>
   <widget class="QWidget" name="gridLayoutWidget">
    <property name="geometry">
@@ -28,7 +32,7 @@
      <height>135</height>
     </rect>
    </property>
-   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0" columnminimumwidth="0,0,0,0">
+   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0">
     <item row="0" column="0">
      <widget class="QPushButton" name="setStartPoseButton">
       <property name="text">
@@ -42,7 +46,8 @@
        <string>...</string>
       </property>
       <property name="icon">
-       <iconset theme="info"/>
+       <iconset theme="info">
+        <normaloff>../../../../.designer/backup</normaloff>../../../../.designer/backup</iconset>
       </property>
       <property name="toolButtonStyle">
        <enum>Qt::ToolButtonIconOnly</enum>
@@ -62,7 +67,8 @@
        <string>...</string>
       </property>
       <property name="icon">
-       <iconset theme="info"/>
+       <iconset theme="info">
+        <normaloff>../../../../.designer/backup</normaloff>../../../../.designer/backup</iconset>
       </property>
      </widget>
     </item>
@@ -127,7 +133,7 @@
    <property name="geometry">
     <rect>
      <x>10</x>
-     <y>200</y>
+     <y>230</y>
      <width>391</width>
      <height>31</height>
     </rect>
@@ -140,7 +146,7 @@
       </property>
       <property name="icon">
        <iconset theme="help">
-        <normaloff>.</normaloff>.</iconset>
+        <normaloff>../../../../.designer/backup</normaloff>../../../../.designer/backup</iconset>
       </property>
       <property name="flat">
        <bool>false</bool>
@@ -154,7 +160,7 @@
       </property>
       <property name="icon">
        <iconset theme="view-refresh">
-        <normaloff>.</normaloff>.</iconset>
+        <normaloff>../../../../.designer/backup</normaloff>../../../../.designer/backup</iconset>
       </property>
      </widget>
     </item>
@@ -165,7 +171,7 @@
       </property>
       <property name="icon">
        <iconset theme="media-playback-start">
-        <normaloff>.</normaloff>.</iconset>
+        <normaloff>../../../../.designer/backup</normaloff>../../../../.designer/backup</iconset>
       </property>
      </widget>
     </item>
@@ -275,6 +281,47 @@
    </property>
    <property name="showGroupSeparator" stdset="0">
     <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QCheckBox" name="customStepSizeCheckbox">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>200</y>
+     <width>201</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Use custom step size (m):</string>
+   </property>
+   <property name="tristate">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QDoubleSpinBox" name="customStepSizeSpinBox">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>200</y>
+     <width>81</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <property name="wrapping">
+    <bool>false</bool>
+   </property>
+   <property name="frame">
+    <bool>true</bool>
+   </property>
+   <property name="decimals">
+    <number>5</number>
+   </property>
+   <property name="singleStep">
+    <double>0.000500000000000</double>
+   </property>
+   <property name="value">
+    <double>0.000500000000000</double>
    </property>
   </widget>
  </widget>
