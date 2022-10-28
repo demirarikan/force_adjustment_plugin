@@ -1,5 +1,6 @@
-# Dict keys correspond to index of anatomy selection combobox, values are [min, max]
+# Dict keys correspond to index of anatomy selection combobox, values are [min. force, max. force]
 # Make sure the order of the list is consistent with the list in the combobox!
+# THIS NEEDS TO BE UPDATED WITH THE NEW FORCES AND ANATOMIES!
 # Index: Name
 # 1: Thyroid
 # 2: Abdominal aorta

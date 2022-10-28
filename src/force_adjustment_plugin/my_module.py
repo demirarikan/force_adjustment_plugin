@@ -1,5 +1,4 @@
 import os
-from sqlite3 import adapt
 from time import sleep
 import rospy
 import rospkg
@@ -37,7 +36,7 @@ class MyPlugin(Plugin):
         # Create QWidget
         self._widget = QWidget()
         # Get path to UI file which should be in the "resource" folder of this package
-        ui_file = os.path.join(rospkg.RosPack().get_path('rqt_mypkg'), 'resource', 'MyPlugin.ui')
+        ui_file = os.path.join(rospkg.RosPack().get_path('force_adjustment_plugin'), 'resource', 'MyPlugin.ui')
         # Extend the widget with all attributes and children from UI file
         loadUi(ui_file, self._widget)
         # Give QObjects reasonable names
@@ -202,7 +201,9 @@ class MyPlugin(Plugin):
         self._widget.anatomySelection.setCurrentIndex(0)
         self._widget.desiredForceSpinBox.setValue(0)
         self._widget.deviationSpinBox.setValue(0)
+        self._widget.customStepSizeSpinBox.setDisabled(True)
         self.robot = fz.RobotInstance()
+        self._widget.customStepSizeSpinBox.setValue(self.robot.step_size)
 
 
     def _handle_help_button_clicked(self):
@@ -212,7 +213,7 @@ class MyPlugin(Plugin):
         Resetting the sensor: To be used after attaching or removing from the sensor. Resets the values to 0 similar to the tare function on a scale\n\n\
         Desired force: The force that will be applied during the scan. Has to be between min. and max. forces\n\n\
         Deviation from desired force: Sets the force limits for the scan. 100 allows for all values between the desired force and min./max. forces.\n\n\
-        Custom step size: Distance that the robot will move in order to increase or decrease the force at each step. \n\n\
+        Custom step size: Distance that the robot will move in order to increase or decrease the force at each correction. \n\n\
         Reset: Resets all fields.\n\n\
         Start: Moves the robot to the starting position and starts the scan.")
 

@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>rqt_mypkg</name>
+  <name>force_adjustment_plugin</name>
   <version>0.0.0</version>
   <description>The rqt_mypkg package</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag -->
   <!-- Example:  -->
   <!-- <maintainer email="jane.doe@example.com">Jane Doe</maintainer> -->
-  <maintainer email="hzc0074@todo.todo">hzc0074</maintainer>
+  <maintainer email="dmrarikan@gmail.com">Demir</maintainer>
 
 
   <!-- One license tag required, multiple allowed, one license per tag -->
