@@ -2,7 +2,7 @@ import os
 from time import sleep
 import rospy
 import rospkg
-from force_adjustment import force_z_control_loop as fz
+from force_adjustment import robot_instance as ri
 import anatomy_limits
 
 from qt_gui.plugin import Plugin
@@ -78,7 +78,7 @@ class MyPlugin(Plugin):
         self._widget.resetButton.clicked.connect(self._handle_reset_button_clicked)
         self._widget.startButton.clicked.connect(self._handle_start_button_clicked)
 
-        self.robot = fz.RobotInstance()
+        self.robot = ri.RobotInstance()
 
 
     def _handle_anatomy_selection_index_changed(self, index):
@@ -202,7 +202,7 @@ class MyPlugin(Plugin):
         self._widget.desiredForceSpinBox.setValue(0)
         self._widget.deviationSpinBox.setValue(0)
         self._widget.customStepSizeSpinBox.setDisabled(True)
-        self.robot = fz.RobotInstance()
+        self.robot = ri.RobotInstance()
         self._widget.customStepSizeSpinBox.setValue(self.robot.step_size)
 
 
