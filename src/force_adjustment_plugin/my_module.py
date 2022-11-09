@@ -171,8 +171,8 @@ class MyPlugin(Plugin):
            self.robot.lower_threshold == 0 or self.robot.upper_threshold == 0:
             QtWidgets.QMessageBox.critical(self._widget, "Error", "Please set valid values for all fields ")
 
-        elif self._widget.desiredForceSpinBox.value() < anatomy_limits.ANATOMY_LIMITS[self._widget.anatomySelection.currentIndex()][0] or\
-            self._widget.desiredForceSpinBox.value() > anatomy_limits.ANATOMY_LIMITS[self._widget.anatomySelection.currentIndex()][1]:
+        elif self._widget.desiredForceSpinBox.value() < self.robot.lower_threshold or\
+            self._widget.desiredForceSpinBox.value() > self.robot.upper_threshold:
                 QtWidgets.QMessageBox.critical(self._widget, "Error", "Desired force has to be between min and max forces")
         else: 
             self.robot.lower_deviation, self.robot.upper_deviation = calculate_force_limits(self._widget.deviationSpinBox.value(), self.robot.desired_force,\
